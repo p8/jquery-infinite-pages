@@ -61,17 +61,22 @@ Released under the MIT License
       if nav.size() == 0
         @_log "No more pages to load"
       else
-        windowBottom = @$context.scrollTop() + @$context.height()
-        distance = nav.offset().top - windowBottom
-
+        remaining = @calculateRemaining()
         if @options.state.paused
           @_log "Paused"
         else if @options.state.loading
           @_log "Waiting..."
-        else if (distance > @options.buffer)
-          @_log "#{distance - @options.buffer}px remaining..."
+        else if remaining > 0
+          @_log "#{remaining}px remaining..."
         else
           @next() # load the next page
+
+    # Calculate the distance of the nav selector from the bottom of the window
+    calculateRemaining: ->
+      nav = @$container.find(@options.navSelector)
+      windowBottom = @$context.scrollTop() + @$context.height()
+      distance = nav.offset().top - windowBottom
+      distance - @options.buffer
 
     # Load the next page
     next: ->
